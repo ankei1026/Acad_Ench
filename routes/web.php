@@ -19,4 +19,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::get('/tutor', [TutorApplicationController::class, 'index'])->name('tutor.index');
 
-require __DIR__ . '/settings.php';
+
+Route::prefix('admin')->group(function (){
+    Route::get('/dashboard', function () {
+        return Inertia::render('Admin/Dashboard');
+    })->name('admin.dashboard');
+});
+
+require __DIR__.'/settings.php';
