@@ -4,15 +4,7 @@ import { Separator } from '@/components/ui/separator';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import {
-    BookOpen,
-    Calendar,
-    CreditCard,
-    DollarSign,
-    MapPin,
-    Phone,
-    Star,
-} from 'lucide-react';
+import { BookOpen, Calendar, CreditCard, Star } from 'lucide-react';
 
 interface TutorProfileProps {
     tutor: {
@@ -124,24 +116,6 @@ export default function TutorProfileView({ tutor }: TutorProfileProps) {
                                         </span>
                                     </div>
                                 )}
-
-                                {tutor.location && (
-                                    <div className="mt-4 flex items-center justify-center gap-2 text-sm">
-                                        <MapPin className="h-4 w-4 text-yellow-600" />
-                                        <span className="text-gray-700">
-                                            {tutor.location}
-                                        </span>
-                                    </div>
-                                )}
-
-                                {tutor.total_sessions && (
-                                    <div className="mt-4 rounded-lg bg-gray-50 p-3">
-                                        <p className="text-sm font-semibold text-gray-700">
-                                            {tutor.total_sessions.toLocaleString()}{' '}
-                                            Completed Sessions
-                                        </p>
-                                    </div>
-                                )}
                             </div>
                         </CardContent>
                     </Card>
@@ -155,33 +129,23 @@ export default function TutorProfileView({ tutor }: TutorProfileProps) {
                             <div className="space-y-6">
                                 <Separator />
 
-                                {/* Professional Info */}
                                 <div className="space-y-4">
                                     <h3 className="flex items-center text-sm font-medium text-gray-700">
                                         <BookOpen className="mr-2 h-4 w-4" />
                                         Teaching Information
                                     </h3>
-                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                    <div className="space-y-4">
                                         <InfoField
                                             label="Subject"
-                                            value={tutor.subject}
-                                            icon={
-                                                <BookOpen className="h-4 w-4" />
-                                            }
+                                            value={tutor?.subject}
                                         />
                                         <InfoField
                                             label="Specializations"
-                                            value={tutor.specializations}
-                                            icon={
-                                                <BookOpen className="h-4 w-4" />
-                                            }
+                                            value={tutor?.specializations}
                                         />
                                         <InfoField
                                             label="Rate per hour"
-                                            value={`₱${tutor.rate_per_hour?.toLocaleString('en-PH') || '0.00'}`}
-                                            icon={
-                                                <DollarSign className="h-4 w-4" />
-                                            }
+                                            value={`₱${tutor?.rate_per_hour?.toLocaleString('en-PH') || '0.00'}`}
                                         />
                                     </div>
                                 </div>
@@ -198,14 +162,10 @@ export default function TutorProfileView({ tutor }: TutorProfileProps) {
                                         <InfoField
                                             label="Mode of Payment"
                                             value={tutor.mop}
-                                            icon={
-                                                <CreditCard className="h-4 w-4" />
-                                            }
                                         />
                                         <InfoField
                                             label="Payment Number"
                                             value={tutor.number}
-                                            icon={<Phone className="h-4 w-4" />}
                                         />
                                     </div>
                                 </div>
@@ -234,26 +194,13 @@ export default function TutorProfileView({ tutor }: TutorProfileProps) {
     );
 }
 
-function InfoField({
-    label,
-    value,
-    icon,
-}: {
-    label: string;
-    value?: string;
-    icon?: React.ReactNode;
-}) {
+function InfoField({ label, value }: { label: string; value?: string }) {
     return (
-        <div className="space-y-1">
-            <div className="flex items-center text-xs text-gray-500">
-                {icon && <span className="mr-2">{icon}</span>}
-                {label}
-            </div>
-            <div className="rounded-lg border border-gray-200 p-3">
-                <span className="text-sm font-medium text-gray-900">
-                    {value || 'Not specified'}
-                </span>
-            </div>
+        <div>
+            <span className="mb-1 block text-xs text-gray-500">{label}</span>
+            <span className="text-sm font-medium text-gray-900">
+                {value || 'Not specified'}
+            </span>
         </div>
     );
 }

@@ -2,7 +2,7 @@ import { Link } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
 
 import AppLogoIcon from '@/components/app-logo-icon';
-import { home } from '@/routes';
+import { welcome } from '@/routes';
 
 interface AuthLayoutProps {
     name?: string;

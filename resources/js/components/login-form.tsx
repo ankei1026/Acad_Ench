@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Link, router, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
+import { toast } from 'sonner';
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
     const { data, setData, processing, errors, post } = useForm({
@@ -13,17 +14,28 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
     });
 
     const submit: FormEventHandler = (e) => {
-        e.preventDefault();
-        post('/authentication/login', {
-            onFinish: () => {
-                // Clear password field after submission
-                setData('password', '');
-            },
-            // onSuccess: () => {
-            //     router.redirect(`'/${role}/dashboard'`);
-            // }
-        });
-    };
+    e.preventDefault();
+
+    post('/authentication/login', {
+        onSuccess: () => {
+            toast.success("Login successful", {
+                className: "bg-green-50 text-green-800 border-green-200",
+            });
+        },
+
+        onError: () => {
+            toast.error("Login failed", {
+                description: "Invalid email or password.",
+                className: "bg-red-50 text-red-800 border-red-200",
+            });
+        },
+
+        onFinish: () => {
+            setData('password', '');
+        },
+    });
+};
+
 
     return (
         <div className={cn('flex flex-col gap-6', className)} {...props}>
