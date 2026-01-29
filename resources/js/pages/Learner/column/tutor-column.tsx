@@ -11,13 +11,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ColumnDef } from '@tanstack/react-table';
-import {
-    BookOpen,
-    CheckCircle,
-    DollarSign,
-    MoreHorizontal,
-    XCircle,
-} from 'lucide-react';
+import { BookOpen, CheckCircle, DollarSign, MoreHorizontal, XCircle } from 'lucide-react';
 
 export type Tutor = {
     tutor_id: string;

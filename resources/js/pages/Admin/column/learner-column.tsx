@@ -12,12 +12,12 @@ import {
 import { ColumnDef } from '@tanstack/react-table';
 import {
     Calendar,
-    CheckCircle,
-    Eye,
+    Mail,
     MoreHorizontal,
     User2,
     XCircle,
 } from 'lucide-react';
+import { formatDateTime } from '@/lib/dateTimeFormat';
 
 export type Learner = {
     id: string;
@@ -47,31 +47,25 @@ export const columns: ColumnDef<Learner>[] = [
         accessorKey: 'email',
         header: 'Email',
         cell: ({ row }) => {
-            return <div className="text-gray-600">{row.original.email}</div>;
+            return (
+                <div className="flex items-center gap-2 text-gray-600">
+                    <Mail className="h-4 w-4 text-gray-400" />
+                    {row.original.email}
+                </div>
+            );
         },
     },
     {
         accessorKey: 'created_at',
         header: 'Joined Date',
         cell: ({ row }) => {
-            const date = new Date(row.original.created_at);
+            const { date, time } = formatDateTime(row.original.created_at);
             return (
                 <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-gray-400" />
                     <div className="flex flex-col">
-                        <span className="text-sm font-medium">
-                            {date.toLocaleDateString('en-US', {
-                                month: 'short',
-                                day: 'numeric',
-                                year: 'numeric',
-                            })}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                            {date.toLocaleTimeString('en-US', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                            })}
-                        </span>
+                        <span className="text-sm font-medium">{date}</span>
+                        <span className="text-xs text-gray-500">{time}</span>
                     </div>
                 </div>
             );

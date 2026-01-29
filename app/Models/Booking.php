@@ -22,6 +22,7 @@ class Booking extends Model
         'decline_reason',
         'booking_status',
         'booking_date',
+        'amount',
         'session_duration',
         'start_time',
         'end_time',
@@ -55,8 +56,17 @@ class Booking extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     public function tutor()
     {
         return $this->belongsTo(Tutor::class, 'tutor_id', 'tutor_id');
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'tutor_id');
     }
 }

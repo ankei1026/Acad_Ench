@@ -25,6 +25,8 @@ interface Booking {
         user?: {
             name: string;
         };
+        mop: string;
+        number: string
     };
 }
 

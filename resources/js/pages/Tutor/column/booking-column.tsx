@@ -1,25 +1,52 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
 import { ColumnDef } from '@tanstack/react-table';
-import { CheckCircle, Clock, XCircle, AlertCircle, CreditCard, Smartphone, Calendar, CheckSquare } from 'lucide-react';
-
+import {
+    AlertCircle,
+    BookOpen,
+    Calendar,
+    CheckCircle,
+    CheckSquare,
+    Clock,
+    CreditCard,
+    DollarSign,
+    MoreHorizontal,
+    Smartphone,
+    User2,
+    XCircle,
+} from 'lucide-react';
 export type Booking = {
-    id: string;
+    book_id: string;
     name: string;
     subject: string;
     photo: string;
     amount: number;
-    mop: 'gcash' | 'paymaya';
-    payment_status: 'paid' | 'pending' | 'canceled' | 'failed';
-    booking_status: 'scheduled' | 'completed' | 'canceled';
+    mop: string
+    booking_status: 'pending' | 'paid' | 'canceled';
+    tutor_status: 'accept' | 'pending' | 'decline' | 'success' | 'failed';
 };
 
 export const columns: ColumnDef<Booking>[] = [
     {
-        accessorKey: 'id',
+        accessorKey: 'book_id',
         header: 'ID',
         cell: ({ row }) => {
-            return <span className="text-sm font-mono">#{row.getValue('id').slice(0, 6)}</span>;
+            const bookId = row.original.book_id || '';
+            return (
+                <span className="font-mono text-sm">
+                    #{bookId.slice(0, 6) || 'N/A'}
+                </span>
+            );
         },
     },
     {
@@ -29,7 +56,7 @@ export const columns: ColumnDef<Booking>[] = [
             const booking = row.original;
             return (
                 <div className="flex items-center gap-3">
-
+                    <User2 className="h-4 w-4 text-gray-400" />
                     <div>
                         <div className="font-medium">{booking.name}</div>
                     </div>
@@ -40,6 +67,14 @@ export const columns: ColumnDef<Booking>[] = [
     {
         accessorKey: 'subject',
         header: 'Subject',
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-blue-500" />
+                    <span>{row.original.subject}</span>
+                </div>
+            );
+        },
     },
     {
         accessorKey: 'amount',
@@ -47,8 +82,14 @@ export const columns: ColumnDef<Booking>[] = [
         cell: ({ row }) => {
             const amount = parseFloat(row.getValue('amount'));
             return (
-                <div className="font-medium">
-                    ₱{amount.toLocaleString('en-PH', { minimumFractionDigits: 2 })}
+                <div className="flex items-center gap-2">
+                    <DollarSign className="h-4 w-4 text-green-600" />
+                    <div className="font-medium">
+                        ₱
+                        {amount.toLocaleString('en-PH', {
+                            minimumFractionDigits: 2,
+                        })}
+                    </div>
                 </div>
             );
         },
@@ -105,9 +146,9 @@ export const columns: ColumnDef<Booking>[] = [
             return (
                 <div className="flex items-center gap-2">
                     {statusIcons[status as keyof typeof statusIcons]}
-                    <span className={`px-3 py-1 rounded-full text-xs border ${statusStyles[status as keyof typeof statusStyles]}`}>
+                    <Badge className={statusStyles[status as keyof typeof statusStyles]}>
                         {statusText[status as keyof typeof statusText]}
-                    </span>
+                    </Badge>
                 </div>
             );
         },
@@ -139,9 +180,9 @@ export const columns: ColumnDef<Booking>[] = [
             return (
                 <div className="flex items-center gap-2">
                     {statusIcons[status as keyof typeof statusIcons]}
-                    <span className={`px-3 py-1 rounded-full text-xs border ${statusStyles[status as keyof typeof statusStyles]}`}>
+                    <Badge className={statusStyles[status as keyof typeof statusStyles]}>
                         {statusText[status as keyof typeof statusText]}
-                    </span>
+                    </Badge>
                 </div>
             );
         },
@@ -151,16 +192,31 @@ export const columns: ColumnDef<Booking>[] = [
         header: 'Actions',
         cell: ({ row }) => {
             const booking = row.original;
-
             return (
-                <div className="flex gap-2">
-                    <button
-                        onClick={() => console.log('View:', booking.id)}
-                        className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                    >
-                        View
-                    </button>
-                </div>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Update Booking</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => console.log('Update to scheduled', booking.book_id)}>
+                            <Calendar className="mr-2 h-4 w-4" />
+                            Mark as Scheduled
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => console.log('Update to completed', booking.book_id)}>
+                            <CheckCircle className="mr-2 h-4 w-4" />
+                            Mark as Completed
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-red-600" onClick={() => console.log('Update to canceled', booking.book_id)}>
+                            <XCircle className="mr-2 h-4 w-4" />
+                            Mark as Canceled
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             );
         },
     },

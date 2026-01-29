@@ -1,7 +1,8 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { CheckCircle, Clock, XCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle, Clock, CreditCard, Smartphone, XCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 export type Payment = {
     id: string;
@@ -47,8 +48,18 @@ export const columns: ColumnDef<Payment>[] = [
         cell: ({ row }) => {
             const mop = row.getValue('mop');
             return (
-                <div className="capitalize">
-                    {mop === 'gcash' ? 'GCash' : 'PayMaya'}
+                <div className="flex items-center gap-2">
+                    {mop === 'gcash' ? (
+                        <>
+                            <Smartphone className="h-4 w-4 text-green-600" />
+                            <span className="text-sm">GCash</span>
+                        </>
+                    ) : (
+                        <>
+                            <CreditCard className="h-4 w-4 text-blue-600" />
+                            <span className="text-sm">PayMaya</span>
+                        </>
+                    )}
                 </div>
             );
         },
@@ -60,16 +71,22 @@ export const columns: ColumnDef<Payment>[] = [
             const status = row.getValue('status');
             const isPaid = status === 'paid';
 
+            const statusStyles = {
+                paid: 'bg-green-100 text-green-800 border-green-200',
+                pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+            };
+
+            const statusIcons = {
+                paid: <CheckCircle className="h-4 w-4 text-green-600" />,
+                pending: <Clock className="h-4 w-4 text-yellow-600" />,
+            };
+
             return (
                 <div className="flex items-center gap-2">
-                    {isPaid ? (
-                        <CheckCircle className="h-4 w-4 text-green-500" />
-                    ) : (
-                        <Clock className="h-4 w-4 text-yellow-500" />
-                    )}
-                    <span className={`font-medium ${isPaid ? 'text-green-600' : 'text-yellow-600'}`}>
+                    {statusIcons[status as keyof typeof statusIcons]}
+                    <Badge className={statusStyles[status as keyof typeof statusStyles]}>
                         {isPaid ? 'Paid' : 'Pending'}
-                    </span>
+                    </Badge>
                 </div>
             );
         },

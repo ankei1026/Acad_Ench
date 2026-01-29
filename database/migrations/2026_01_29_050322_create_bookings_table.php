@@ -23,8 +23,10 @@ return new class extends Migration
                   ->on('tutors')
                   ->cascadeOnDelete();
 
+            $table->string('amount')->nullable();
+
             $table->enum('tutor_status', ['pending', 'accept', 'decline', 'success', 'failed'])
-                  ->default('accept');
+                  ->default('pending');
 
             $table->longText('decline_reason')->nullable();
 

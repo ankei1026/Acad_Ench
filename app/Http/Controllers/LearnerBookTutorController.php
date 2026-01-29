@@ -82,6 +82,12 @@ class LearnerBookTutorController extends Controller
             abort(403, 'Only learners can book tutors.');
         }
 
+        // Get tutor to fetch rate_per_hour
+        $tutor = Tutor::findOrFail($request->tutor_id);
+
+        // Calculate amount based on session_duration and rate_per_hour
+        $amount = $request->session_duration * $tutor->rate_per_hour;
+
         $booking = Booking::create([
             'user_id' => Auth::id(),
             'tutor_id' => $request->tutor_id,
@@ -89,6 +95,7 @@ class LearnerBookTutorController extends Controller
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
             'session_duration' => $request->session_duration,
+            'amount' => $amount,
         ]);
 
         return response()->json([
