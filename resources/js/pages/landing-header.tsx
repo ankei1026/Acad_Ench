@@ -11,9 +11,8 @@ export default function LandingHeader() {
 
     const menuItems = [
         { label: 'Home', href: '/' },
-        { label: 'Materials', href: '/materials' },
         { label: 'Tutors', href: '/tutor' },
-        { label: 'Pricing', href: '/pricing' },
+        { label: 'Developers', href: '/developers' },
     ];
 
     return (
@@ -98,7 +97,7 @@ export default function LandingHeader() {
 
                         {/* CTA Button */}
                         <Link
-                            href="/auth/signup"
+                            href="/authentication/signup"
                             className="hidden rounded-full bg-black px-5 py-2.5 text-base font-semibold text-white transition-all duration-200 hover:bg-yellow-300 hover:text-black focus:bg-yellow-300 focus:text-black lg:inline-flex"
                         >
                             Join Now
@@ -128,7 +127,7 @@ export default function LandingHeader() {
                                 })}
 
                                 <Link
-                                    href="/auth/signup"
+                                    href="/authentication/signup"
                                     className="mt-4 block w-full rounded-md bg-black px-3 py-2 text-center text-base font-semibold text-white transition-all duration-200 hover:bg-gray-800"
                                 >
                                     Join Now

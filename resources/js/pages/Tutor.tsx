@@ -67,7 +67,7 @@ export default function TutorApplication() {
                             </div>
 
                             {/* RIGHT SIDE — FORM */}
-                            <Card className="bg-white text-gray-900 shadow-lg">
+                            <Card className="bg-white text-gray-900 shadow-lg border-gray-200">
                                 <CardHeader>
                                     <CardTitle className="text-xl">
                                         Tutor Application

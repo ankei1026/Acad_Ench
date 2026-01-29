@@ -21,7 +21,7 @@ export default function Homepage() {
 
                             {/* CTA Button */}
                             <Link
-                                href="/auth/signup"
+                                href="/authentication/signup"
                                 className="group mt-8 inline-flex items-center rounded-full bg-yellow-300 px-6 py-4 font-semibold text-black transition-all duration-200 hover:bg-yellow-400 focus:bg-yellow-400 lg:mt-16"
                                 role="button"
                             >
@@ -45,16 +45,16 @@ export default function Homepage() {
                             {/* Login Link */}
                             <p className="mt-5 text-gray-600">
                                 Already joined us?{' '}
-                                <Link href="/auth/login" className="text-black transition-all duration-200 hover:underline">
+                                <Link href="/authentication/login" className="text-black transition-all duration-200 hover:underline">
                                     Log in
                                 </Link>
                             </p>
                         </div>
 
                         {/* Hero Image */}
-                        <div>
+                        <div className='rounded-md shadow-lg'>
                             <img
-                                src="/assets/mockupy.avif"
+                                src="/assets/imghero1.png"
                                 className="w-full rounded-md"
                                 alt="People collaborating and learning"
                             />

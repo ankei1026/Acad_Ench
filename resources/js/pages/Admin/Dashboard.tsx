@@ -1,8 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
-import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { BookOpen, Users } from 'lucide-react';
+import { BookOpen, File, Users } from 'lucide-react';
 import { DataTable } from '../Components/DataTable';
 import StatusCard from '../Components/StatusCard';
 import { columns, type Payment } from './column/payment-column';
@@ -10,7 +9,7 @@ import { columns, type Payment } from './column/payment-column';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard().url,
+        href: '/admin/dashboard',
     },
 ];
 
@@ -62,10 +61,11 @@ export default function Dashboard() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
+                <div className="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    <div className="relative h-[12rem] overflow-hidden rounded-xl shadow-md">
                         <StatusCard
-                            className="bg-yellow-200 border-yellow-400"
+                            link="/admin/revenue"
+                            className="bg-yellow-200"
                             title="Revenue"
                             value="8,000"
                             description="Total revenue generated"
@@ -74,16 +74,18 @@ export default function Dashboard() {
                             }
                         />
                     </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
+                    <div className="relative h-[12rem] overflow-hidden rounded-xl shadow-md">
                         <StatusCard
+                            link="/admin/tutors"
                             title="Tutor"
                             value="34"
                             description="Number of registered tutors"
                             icon={<Users size={24} className="text-gray-400" />}
                         />
                     </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
+                    <div className="relative h-[12rem] overflow-hidden rounded-xl shadow-md">
                         <StatusCard
+                            link="/admin/learners"
                             title="Learner"
                             value="1,234"
                             description="Number of registered learners"
@@ -92,10 +94,35 @@ export default function Dashboard() {
                             }
                         />
                     </div>
+                    <div className="relative h-[12rem] overflow-hidden rounded-xl shadow-md">
+                        <StatusCard
+                            link="/admin/tutor-applications"
+                            title="Tutor Applications"
+                            value={2}
+                            description="Number of tutor applications"
+                            icon={<File size={24} className="text-gray-400" />}
+                        />
+                    </div>
                 </div>
-                <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl">
-                    {/* Pass the columns and data to DataTable */}
-                    <DataTable columns={columns} data={data} />
+
+                <div className='mt-4'>
+                    <h1 className="text-3xl font-bold tracking-tight">
+                        Paid Bookings
+                    </h1>
+                    <p className="text-muted-foreground">
+                        Paid bookings overview and details
+                    </p>
+                </div>
+
+                <div className="relative flex-1 overflow-hidden rounded-xl bg-[#FFFFFF] shadow-md">
+                    <div className="m-4">
+                        {/* Pass the columns and data to DataTable */}
+                        <DataTable
+                            columns={columns}
+                            data={data}
+                            // title='Successful Payments'
+                        />
+                    </div>
                 </div>
             </div>
         </AppLayout>
