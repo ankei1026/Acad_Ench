@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Booking;
 use App\Models\Tutor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class LearnerBookTutorController extends Controller
@@ -64,5 +66,34 @@ class LearnerBookTutorController extends Controller
         return Inertia::render('Learner/TutorShow', [
             'tutor' => $tutor,
         ]);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'tutor_id' => 'required|exists:tutors,tutor_id',
+            'booking_date' => 'required|date',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i',
+            'session_duration' => 'required|numeric',
+        ]);
+
+        if (Auth::user()->role !== 'learner') {
+            abort(403, 'Only learners can book tutors.');
+        }
+
+        $booking = Booking::create([
+            'user_id' => Auth::id(),
+            'tutor_id' => $request->tutor_id,
+            'booking_date' => $request->booking_date,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+            'session_duration' => $request->session_duration,
+        ]);
+
+        return response()->json([
+            'message' => 'Booking created successfully',
+            'booking' => $booking,
+        ], 201);
     }
 }

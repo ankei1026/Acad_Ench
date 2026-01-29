@@ -3,13 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Booking;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class LearnerHomeController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Learner/Home');
+        $bookings = Booking::where('user_id', Auth::id())
+            ->with(['tutor.user'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return Inertia::render('Learner/Home', [
+            'bookings' => $bookings,
+        ]);
     }
 }

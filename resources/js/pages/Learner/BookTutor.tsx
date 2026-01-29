@@ -2,6 +2,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { DatePicker } from '@/components/ui/date-picker';
+import { TimePicker } from '@/components/ui/time-picker';
 import {
     Select,
     SelectContent,
@@ -10,14 +12,27 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
+import { toast } from 'sonner';
 import { debounce } from 'lodash';
 import {
     Book,
+    Calendar,
     ChevronLeft,
     ChevronRight,
+    Clock,
     MapPin,
     Search,
     Star,
@@ -88,6 +103,73 @@ const TutorCard = ({ tutor }: { tutor: Tutor }) => {
     const imageSrc = tutor.photo
         ? `/storage/${tutor.photo}`
         : '/assets/default.webp';
+
+    const [date, setDate] = useState('');
+    const [startTime, setStartTime] = useState('');
+    const [endTime, setEndTime] = useState('');
+    const [sessionHours, setSessionHours] = useState(0);
+
+    // Calculate session hours when start and end times change
+    const calculateSessionHours = (start: string, end: string) => {
+        if (!start || !end) {
+            setSessionHours(0);
+            return;
+        }
+
+        try {
+            const [startHour, startMin] = start.split(':').map(Number);
+            const [endHour, endMin] = end.split(':').map(Number);
+
+            const startTotalMin = startHour * 60 + startMin;
+            const endTotalMin = endHour * 60 + endMin;
+
+            let diffMin = endTotalMin - startTotalMin;
+            if (diffMin < 0) diffMin += 24 * 60; // Handle next day case
+
+            const hours = diffMin / 60;
+            setSessionHours(parseFloat(hours.toFixed(2)));
+        } catch {
+            setSessionHours(0);
+        }
+    };
+
+    const handleStartTimeChange = (value: string) => {
+        setStartTime(value);
+        calculateSessionHours(value, endTime);
+    };
+
+    const handleEndTimeChange = (value: string) => {
+        setEndTime(value);
+        calculateSessionHours(startTime, value);
+    };
+
+    const handleBooking = () => {
+        if (!date || !startTime || !endTime) return;
+
+        router.post('/learner/book-tutor', {
+            tutor_id: tutor.tutor_id,
+            booking_date: date,
+            start_time: startTime,
+            end_time: endTime,
+            session_duration: sessionHours,
+        }, {
+            onSuccess: () => {
+                toast.success('Booking successful!', {
+                    description: `Your session with ${tutor.user.name} has been booked.`,
+                });
+                // Reset form
+                setDate('');
+                setStartTime('');
+                setEndTime('');
+                setSessionHours(0);
+            },
+            onError: (error: any) => {
+                toast.error('Booking failed', {
+                    description: error.message || 'Please try again.',
+                });
+            },
+        });
+    };
 
     return (
         <Card>
@@ -160,11 +242,116 @@ const TutorCard = ({ tutor }: { tutor: Tutor }) => {
                     </Link>
                 </Button>
 
-                <Button size="sm" className="w-full flex-1 py-1" asChild>
-                    <Link href={`/learner/book-tutor/${tutor.id}/schedule`}>
-                        <Book /> Book
-                    </Link>
-                </Button>
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button size="sm" className="w-full flex-1 py-1">
+                            <Book /> Book
+                        </Button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>
+                                Schedule Your Session with {tutor.user.name}
+                            </AlertDialogTitle>
+                        </AlertDialogHeader>
+
+                        <div className="flex flex-col gap-4">
+                            {/* Date Input */}
+                            <div>
+                                <label className="text-sm font-medium">
+                                    Booking Date
+                                </label>
+                                <div className="relative mt-1">
+                                    <Input
+                                        type="date"
+                                        value={date}
+                                        onChange={(e) => setDate(e.target.value)}
+                                        className="pl-10"
+
+                                    />
+                                    <Calendar className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                                </div>
+                            </div>
+
+                            {/* Start Time Input */}
+                            <div>
+                                <label className="text-sm font-medium">
+                                    Start Time
+                                </label>
+                                <div className="relative mt-1">
+                                    <Input
+                                        type="time"
+                                        value={startTime}
+                                        onChange={(e) =>
+                                            handleStartTimeChange(e.target.value)
+                                        }
+                                        className="pl-10"
+                                    />
+                                    <Clock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                                </div>
+                            </div>
+
+                            {/* End Time Input */}
+                            <div>
+                                <label className="text-sm font-medium">
+                                    End Time
+                                </label>
+                                <div className="relative mt-1">
+                                    <Input
+                                        type="time"
+                                        value={endTime}
+                                        onChange={(e) =>
+                                            handleEndTimeChange(e.target.value)
+                                        }
+                                        className="pl-10"
+                                    />
+                                    <Clock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                                </div>
+                            </div>
+
+                            {/* Session Hours Display */}
+                            {sessionHours > 0 && (
+                                <div className="rounded-md border border-amber-200 bg-amber-50 p-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm font-medium text-amber-900">
+                                            Session Duration
+                                        </span>
+                                        <span className="text-sm font-semibold text-amber-900">
+                                            {sessionHours} hour
+                                            {sessionHours !== 1 ? 's' : ''}
+                                        </span>
+                                    </div>
+                                    <div className="mt-2 border-t border-amber-200 pt-2">
+                                        <span className="text-sm text-amber-700">
+                                            Estimated cost:{' '}
+                                            <span className="font-semibold">
+                                                ₱
+                                                {(
+                                                    tutor.rate_per_hour *
+                                                    sessionHours
+                                                ).toLocaleString('en-PH', {
+                                                    minimumFractionDigits: 2,
+                                                    maximumFractionDigits: 2,
+                                                })}
+                                            </span>
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                                disabled={!date || !startTime || !endTime}
+                                onClick={handleBooking}
+                            >
+                                Continue
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </CardFooter>
         </Card>
     );
@@ -328,7 +515,6 @@ export default function BookTutor({
             <Head title="Book Tutor" />
 
             <div className="flex flex-col gap-6 p-6">
-                {/* Header + Filters */}
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div>
                         <h1 className="text-2xl leading-tight font-semibold">

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tutors', function (Blueprint $table) {
             // Custom tutor ID
-            $table->string('tutor_id', 10)->primary(); // TUT_XXXXX (8 characters total)
+            $table->string('tutor_id', 10)->primary(); 
 
             $table->unsignedBigInteger('user_id');
 

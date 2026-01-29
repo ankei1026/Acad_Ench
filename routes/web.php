@@ -57,6 +57,7 @@ Route::middleware(['auth', 'role:learner'])->prefix('learner')->group(function (
 
     Route::get('/book-tutor', [LearnerBookTutorController::class, 'index'])->name('learner.book-tutor');
     Route::get('book-tutor/tutor/{tutor_id}', [LearnerBookTutorController::class, 'show'])->name('learner.tutors.show');
+    Route::post('/book-tutor', [LearnerBookTutorController::class, 'store'])->name('learner.bookings.store');
 
     Route::get('/lectures', [LearnerLecturesController::class, 'index'])->name('learner.lectures');
 });
