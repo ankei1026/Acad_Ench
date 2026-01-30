@@ -66,7 +66,7 @@ class TutorBookingsController extends Controller
     {
         $request->validate([
             'tutor_status' => 'required|in:pending,accept,decline,success,failed',
-            'decline_reason' => 'required_if:tutor_status,decline|string|max:500',
+            'decline_reason' => 'nullable|string|max:500',
         ]);
 
         // Find the booking by book_id instead of id

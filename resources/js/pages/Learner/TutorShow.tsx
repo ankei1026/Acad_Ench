@@ -4,7 +4,7 @@ import { Separator } from '@/components/ui/separator';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import { BookOpen, Calendar, CreditCard, Star } from 'lucide-react';
+import { BookOpen, CreditCard } from 'lucide-react';
 
 interface TutorProfileProps {
     tutor: {
@@ -18,7 +18,7 @@ interface TutorProfileProps {
         photo?: string;
         mop?: string;
         number?: string;
-        rating?: number;
+        portfolio_link?: string;
         total_sessions?: number;
         user: {
             id: number;
@@ -83,14 +83,6 @@ export default function TutorProfileView({ tutor }: TutorProfileProps) {
                                             '/assets/default.webp';
                                     }}
                                 />
-                                {tutor.rating && (
-                                    <div className="absolute -bottom-2 left-1/2 flex -translate-x-1/2 transform items-center gap-1 rounded-full bg-yellow-100 px-3 py-1 shadow-md">
-                                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-600" />
-                                        <span className="text-xs font-bold text-yellow-800">
-                                            {tutor.rating.toFixed(1)}
-                                        </span>
-                                    </div>
-                                )}
                             </div>
 
                             <div className="w-full text-center">
@@ -101,6 +93,18 @@ export default function TutorProfileView({ tutor }: TutorProfileProps) {
                                     {tutor.user.email}
                                 </p>
 
+                                {tutor.portfolio_link ? (
+                                    <p className="text-sm text-muted-foreground">
+                                        <a
+                                            href={tutor.portfolio_link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-blue-600 underline"
+                                        >
+                                            {tutor.portfolio_link}
+                                        </a>
+                                    </p>
+                                ) : null}
                                 {tutor.tutor_id && (
                                     <div className="mt-3 inline-block rounded-full bg-gray-100 px-3 py-1">
                                         <span className="font-mono text-xs text-gray-600">

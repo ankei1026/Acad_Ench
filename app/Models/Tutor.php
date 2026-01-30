@@ -43,6 +43,7 @@ class Tutor extends Model
         'rate_per_hour',
         'subject',
         'photo',
+        'portfolio_link',
         'bio',
         'status',
         'mop',

@@ -6,14 +6,16 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { Head, useForm, usePage } from '@inertiajs/react';
-import { BookOpen, Camera, CreditCard, DollarSign, Phone } from 'lucide-react';
+import { BookOpen, Camera, CreditCard, DollarSign } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export default function Profile() {
     const { user, tutor } = usePage().props as any;
     const [editing, setEditing] = useState(false);
     const [preview, setPreview] = useState<string | null>(null);
-    const [characterCount, setCharacterCount] = useState(tutor?.bio?.length || 0);
+    const [characterCount, setCharacterCount] = useState(
+        tutor?.bio?.length || 0,
+    );
 
     const { data, setData, post, processing, errors } = useForm({
         name: user.name || '',
@@ -24,6 +26,7 @@ export default function Profile() {
         rate_per_hour: tutor?.rate_per_hour || '',
         bio: tutor?.bio || '',
         mop: tutor?.mop || '',
+        portfolio_link: tutor?.portfolio_link || '',
         photo: null as File | null,
         _method: 'put',
     });
@@ -182,8 +185,6 @@ export default function Profile() {
                                     </p>
                                 )}
                             </div>
-
-
                         </CardContent>
                     </Card>
 
@@ -211,6 +212,11 @@ export default function Profile() {
                                             <InfoField
                                                 label="Specializations"
                                                 value={tutor?.specializations}
+                                            />
+                                            <InfoField
+                                                label="Portfolio"
+                                                value={tutor?.portfolio_link}
+                                                isLink
                                             />
                                             <InfoField
                                                 label="Rate per hour"
@@ -248,7 +254,8 @@ export default function Profile() {
                                                 Bio
                                             </h3>
                                             <span className="text-xs text-gray-500">
-                                                {tutor?.bio?.length || 0}/60 characters
+                                                {tutor?.bio?.length || 0}/60
+                                                characters
                                             </span>
                                         </div>
                                         <div className="rounded-lg bg-gray-50 p-4">
@@ -297,7 +304,8 @@ export default function Profile() {
                                                 </p>
                                             )}
                                             <p className="mt-1 text-xs text-gray-500">
-                                                Required field (max 255 characters)
+                                                Required field (max 255
+                                                characters)
                                             </p>
                                         </Field>
 
@@ -320,7 +328,37 @@ export default function Profile() {
                                                 />
                                             </div>
                                             <p className="mt-1 text-xs text-gray-500">
-                                                Separate with commas (max 255 characters)
+                                                Separate with commas (max 255
+                                                characters)
+                                            </p>
+                                        </Field>
+
+                                        <Field
+                                            label="Portfolio Link"
+                                            error={errors.portfolio_link}
+                                        >
+                                            <div className="flex items-center">
+                                                <BookOpen className="mr-2 h-4 w-4 text-gray-400" />
+                                                <Input
+                                                    value={data.portfolio_link}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'portfolio_link',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    placeholder="https://your-portfolio.example.com"
+                                                    maxLength={255}
+                                                />
+                                            </div>
+                                            {errors.portfolio_link && (
+                                                <p className="text-xs text-red-500">
+                                                    {errors.portfolio_link}
+                                                </p>
+                                            )}
+                                            <p className="mt-1 text-xs text-gray-500">
+                                                Optional - will open in a new
+                                                tab when viewed
                                             </p>
                                         </Field>
 
@@ -389,7 +427,8 @@ export default function Profile() {
                                                 </p>
                                             )}
                                             <p className="mt-1 text-xs text-gray-500">
-                                                Required field (max 10 characters)
+                                                Required field (max 10
+                                                characters)
                                             </p>
                                         </Field>
 
@@ -420,7 +459,8 @@ export default function Profile() {
                                                 </p>
                                             )}
                                             <p className="mt-1 text-xs text-gray-500">
-                                                Required field (max 11 digits, numbers only)
+                                                Required field (max 11 digits,
+                                                numbers only)
                                             </p>
                                         </Field>
                                     </div>
@@ -438,8 +478,10 @@ export default function Profile() {
                                                 maxLength={60}
                                                 className={`pr-16 ${characterCount > 60 ? 'border-red-300' : ''}`}
                                             />
-                                            <div className="absolute bottom-2 right-2">
-                                                <span className={`text-xs ${characterCount > 60 ? 'text-red-500 font-bold' : 'text-gray-500'}`}>
+                                            <div className="absolute right-2 bottom-2">
+                                                <span
+                                                    className={`text-xs ${characterCount > 60 ? 'font-bold text-red-500' : 'text-gray-500'}`}
+                                                >
                                                     {characterCount}/60
                                                 </span>
                                             </div>
@@ -463,12 +505,35 @@ export default function Profile() {
     );
 }
 
-function InfoField({ label, value }: { label: string; value?: string }) {
+function InfoField({
+    label,
+    value,
+    isLink,
+}: {
+    label: string;
+    value?: string;
+    isLink?: boolean;
+}) {
     return (
         <div>
             <span className="mb-1 block text-xs text-gray-500">{label}</span>
             <span className="text-sm font-medium text-gray-900">
-                {value || 'Not specified'}
+                {value ? (
+                    isLink ? (
+                        <a
+                            href={value}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 underline"
+                        >
+                            {value}
+                        </a>
+                    ) : (
+                        value
+                    )
+                ) : (
+                    'Not specified'
+                )}
             </span>
         </div>
     );

@@ -71,7 +71,7 @@ export const columns: ColumnDef<Booking>[] = [
             const booking = row.original;
             return (
                 <div className="flex items-center gap-3">
-                    <User2 className='h-4 w-4'/>
+                    <User2 className='h-4 w-4' />
                     <div>
                         <div className="font-medium">{booking.name}</div>
                     </div>
@@ -239,11 +239,24 @@ function ActionMenu({ booking }: { booking: Booking }) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
+        // Validate decline reason if declining
+        if (selectedStatus === 'decline' && !data.decline_reason.trim()) {
+            toast.error('Please provide a reason for declining', {
+                duration: 5000,
+            });
+            return;
+        }
+
         patch(`/tutor/booking/${booking.book_id}/update-status`, {
             preserveScroll: true,
-            onSuccess: () => {
+            data: {
+                tutor_status: data.tutor_status,
+                decline_reason: selectedStatus === 'decline' ? data.decline_reason : '',
+            },
+            onSuccess: (response) => {
+                console.log('Update successful:', response);
                 toast.success(
-                    `Your response to booking is updated to ${selectedStatus}.`,
+                    `Your response has been updated to ${selectedStatus}.`,
                     {
                         duration: 5000,
                     },
@@ -251,17 +264,22 @@ function ActionMenu({ booking }: { booking: Booking }) {
                 setIsOpen(false);
                 reset();
             },
-            onError: () => {
-                toast.error(
-                    'Failed to update your response. Please try again.',
-                    {
-                        duration: 5000,
-                    },
-                );
+            onError: (errors) => {
+                console.error('Update failed:', errors);
+                let errorMessage = 'Failed to update your response. Please try again.';
+
+                if (errors?.message) {
+                    errorMessage = errors.message;
+                } else if (errors?.tutor_status) {
+                    errorMessage = errors.tutor_status;
+                }
+
+                toast.error(errorMessage, {
+                    duration: 5000,
+                });
             },
         });
     };
-
     return (
         <>
             <DropdownMenu>

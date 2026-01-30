@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('photo')->nullable();
             $table->text('bio')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('inactive');
+            $table->string('portfolio_link')->nullable();
             $table->string('mop')->nullable();
             $table->string('number')->nullable();
 
