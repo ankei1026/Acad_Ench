@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminTutorController;
 use App\Http\Controllers\AdminTutorFilesController;
 use App\Http\Controllers\DeveloperController;
 use App\Http\Controllers\LearnerBookTutorController;
+use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\LearnerDashboardController;
 use App\Http\Controllers\LearnerHomeController;
 use App\Http\Controllers\LearnerLecturesController;
@@ -31,21 +32,32 @@ Route::prefix('authentication')->group(function () {
     Route::post('/signup', [RegisterController::class, 'store']);
 });
 
-Route::get('/tutor', [TutorApplicationController::class, 'index'])->name('tutor.index');
+Route::get('/tutor-application', [TutorApplicationController::class, 'index'])->name('tutor.index');
+Route::post('/tutor-application', [TutorApplicationController::class, 'store'])->name('tutor.store');
 Route::get('/developers', [DeveloperController::class, 'index'])->name('developers.index');
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+
     Route::get('/learners', [AdminLearnerController::class, 'index'])->name('admin.learners');
+
     Route::get('/revenue', [AdminRevenueController::class, 'index'])->name('admin.revenue');
+
     Route::get('/tutors', [AdminTutorController::class, 'index'])->name('admin.tutors');
+    Route::post('/tutors/store', [AdminTutorController::class, 'store'])->name('admin.tutors.store');
+    Route::patch('/tutors/{tutor_id}/update-status', [AdminTutorController::class, 'updateStatus'])->name('admin.tutors.update-status');
+
     Route::get('/tutor-applications', [AdminTutorFilesController::class, 'index'])->name('admin.tutor-applications');
+    Route::patch('/tutor-applications/{id}/approve', [AdminTutorFilesController::class, 'approve'])->name('admin.applications.approve');
+    Route::patch('/tutor-applications/{id}/reject', [AdminTutorFilesController::class, 'reject'])->name('admin.applications.reject');
+    Route::get('/tutor-applications/{id}/download', [AdminTutorFilesController::class, 'downloadDocument'])->name('admin.applications.download');
 });
 
 Route::middleware(['auth', 'role:tutor'])->prefix('tutor')->group(function () {
     Route::get('/dashboard', [TutorDashboardController::class, 'index'])->name('tutor.dashboard');
     Route::get('/lectures', [TutorLecturesController::class, 'index'])->name('tutor.lectures');
     Route::get('/bookings', [TutorBookingsController::class, 'index'])->name('tutor.bookings');
+    Route::patch('/booking/{book_id}/update-status', [TutorBookingsController::class, 'updateStatus'])->name('tutor.booking.update-status');
 
     Route::get('/profile', [TutorProfileController::class, 'index'])->name('tutor.profile');
     Route::put('/profile', [TutorProfileController::class, 'update'])
@@ -60,6 +72,10 @@ Route::middleware(['auth', 'role:learner'])->prefix('learner')->group(function (
     Route::post('/book-tutor', [LearnerBookTutorController::class, 'store'])->name('learner.bookings.store');
 
     Route::get('/lectures', [LearnerLecturesController::class, 'index'])->name('learner.lectures');
+
+    // Learner actions: pay receipt and cancel booking
+    Route::post('/bookings/{book_id}/receipt', [ReceiptController::class, 'store'])->name('learner.bookings.receipt.store');
+    Route::patch('/bookings/{book_id}/cancel', [LearnerBookTutorController::class, 'cancel'])->name('learner.bookings.cancel');
 });
 
 require __DIR__ . '/settings.php';

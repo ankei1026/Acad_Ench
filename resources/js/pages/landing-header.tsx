@@ -11,7 +11,7 @@ export default function LandingHeader() {
 
     const menuItems = [
         { label: 'Home', href: '/' },
-        { label: 'Tutors', href: '/tutor' },
+        { label: 'Tutor Application', href: '/tutor-application' },
         { label: 'Developers', href: '/developers' },
     ];
 

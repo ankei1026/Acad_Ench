@@ -1,12 +1,19 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { Book } from 'lucide-react';
-import StatusCard from '../Components/StatusCard';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useState } from 'react';
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogCancel,
+} from '@/components/ui/alert-dialog';
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -18,63 +25,41 @@ const breadcrumbs: BreadcrumbItem[] = [
 // Setup the localizer with moment
 const localizer = momentLocalizer(moment);
 
-// Example events data
-const events = [
-    {
-        title: 'Math Tutoring - John Doe',
-        start: new Date(2026, 0, 25, 10, 0), // Jan 25, 2026, 10:00 AM
-        end: new Date(2026, 0, 25, 11, 30),  // Jan 25, 2026, 11:30 AM
-        desc: 'Algebra fundamentals',
-        resourceId: 1,
-    },
-    {
-        title: 'Physics Session - Jane Smith',
-        start: new Date(2026, 0, 26, 14, 0),
-        end: new Date(2026, 0, 26, 15, 30),
-        desc: 'Newtonian mechanics',
-        resourceId: 2,
-    },
-    {
-        title: 'Chemistry Lab - Bob Johnson',
-        start: new Date(2026, 0, 27, 9, 0),
-        end: new Date(2026, 0, 27, 10, 30),
-        desc: 'Chemical reactions',
-        resourceId: 3,
-    },
-];
+// Events come from server via Inertia props (falls back to empty array)
+export default function Dashboard({ events: serverEvents }: { events?: any[] }) {
+    const serverEventsArray = serverEvents ?? [];
 
-export default function Dashboard() {
+    const events = serverEventsArray.map((ev) => ({
+        ...ev,
+        start: new Date(ev.start),
+        end: new Date(ev.end),
+    }));
+
     const [currentDate, setCurrentDate] = useState(new Date());
+    const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
 
     const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
         console.log('Selected slot:', start, end);
-        // You can open a modal to create a new event here
-        // setShowEventModal(true);
-        // setSelectedSlot({ start, end });
+
     };
 
     const handleSelectEvent = (event: any) => {
-        console.log('Selected event:', event);
-        // You can open a modal to view/edit the event here
-        // setSelectedEvent(event);
-        // setShowEventModal(true);
+        setSelectedEvent(event);
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
-                    <div className="relative h-[12rem] overflow-hidden rounded-xl shadow-md">
-                        <StatusCard
-                            title="Booking"
-                            value="3"
-                            description="Total pending booking"
-                            icon={<Book />}
-                        />
-                    </div>
-                </div>
-                <div className="w-full h-[500px] bg-white rounded-xl shadow-md p-4">
+            <div className="m-4">
+                <h1 className="text-3xl font-semibold text-gray-900">
+                    Your Booking Schedule
+                </h1>
+                <p className="text-sm text-gray-500">
+                    View your confirmed and paid tutoring sessions.
+                </p>
+            </div>
+            <div className="flex flex-col gap-4 overflow-x-auto rounded-xl p-4">
+                <div className="h-150 w-full rounded-xl bg-white p-4 shadow-md">
                     <Calendar
                         localizer={localizer}
                         events={events}
@@ -85,15 +70,19 @@ export default function Dashboard() {
                         onSelectEvent={handleSelectEvent}
                         selectable
                         defaultView="week"
-                        views={['month', 'week', 'day', 'agenda']}
                         date={currentDate}
-                        onNavigate={(date) => setCurrentDate(date)}
-                        eventPropGetter={(event) => {
-                            // Custom event styling
-                            const backgroundColor =
-                                event.resourceId === 1 ? '#3174ad' :
-                                event.resourceId === 2 ? '#d1453b' :
-                                '#3cb371';
+                        onNavigate={(date: Date) => setCurrentDate(date)}
+                        eventPropGetter={(event: any) => {
+                            // Custom event styling based on tutor_status
+                            let backgroundColor = '#6b7280'; // default gray
+
+                            if (event.tutor_status === 'success') {
+                                backgroundColor = '#22c55e'; // green
+                            } else if (event.tutor_status === 'failed') {
+                                backgroundColor = '#ef4444'; // red
+                            } else if (event.tutor_status === 'accept') {
+                                backgroundColor = '#3b82f6'; // blue
+                            }
 
                             return {
                                 style: {
@@ -102,9 +91,11 @@ export default function Dashboard() {
                                     color: 'white',
                                     border: 'none',
                                     padding: '2px 8px',
+                                    width: '100%',
                                 },
                             };
                         }}
+                        titleAccessor={(event: any) => event.title || event.name}
                         messages={{
                             today: 'Today',
                             previous: 'Back',
@@ -116,11 +107,36 @@ export default function Dashboard() {
                             date: 'Date',
                             time: 'Time',
                             event: 'Event',
-                            showMore: (count) => `+${count} more`,
+                            showMore: (count: number) => `+${count} more`,
                         }}
                     />
                 </div>
             </div>
+
+            <AlertDialog open={!!selectedEvent} onOpenChange={() => setSelectedEvent(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className='mb-4'>
+                            Schedule with {selectedEvent?.title || selectedEvent?.name}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription className="space-y-2">
+                            <div>
+                                <strong>Start:</strong>{' '}
+                                {selectedEvent && moment(selectedEvent.start).format('MMMM D, YYYY h:mm A')}
+                            </div>
+                            <div>
+                                <strong>End:</strong>{' '}
+                                {selectedEvent && moment(selectedEvent.end).format('MMMM D, YYYY h:mm A')}
+                            </div>
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setSelectedEvent(null)}>
+                            Close
+                        </AlertDialogCancel>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </AppLayout>
     );
 }

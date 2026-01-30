@@ -21,6 +21,14 @@ interface Booking {
     session_duration: number | string;
     booking_status: string;
     tutor_status: string;
+    decline_reason?: string | null;
+    amount?: string | number;
+    receipt?: {
+        id: number;
+        reference: string;
+        photo?: string | null;
+        amount: string | number;
+    } | null;
     tutor?: {
         user?: {
             name: string;

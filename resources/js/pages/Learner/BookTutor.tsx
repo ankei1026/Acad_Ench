@@ -2,8 +2,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { DatePicker } from '@/components/ui/date-picker';
-import { TimePicker } from '@/components/ui/time-picker';
 import {
     Select,
     SelectContent,
@@ -171,6 +169,10 @@ const TutorCard = ({ tutor }: { tutor: Tutor }) => {
         });
     };
 
+    // FIX: Add null check for rate_per_hour
+    const ratePerHour = tutor.rate_per_hour || 0;
+    const estimatedCost = ratePerHour * sessionHours;
+
     return (
         <Card>
             <CardContent className="flex gap-4 p-4">
@@ -217,7 +219,7 @@ const TutorCard = ({ tutor }: { tutor: Tutor }) => {
                     </div>
 
                     <span className="text-sm font-medium">
-                        ₱{tutor.rate_per_hour.toLocaleString('en-PH')}
+                        ₱{ratePerHour.toLocaleString('en-PH')}
                         <span className="text-muted-foreground"> / hr</span>
                     </span>
 
@@ -238,14 +240,14 @@ const TutorCard = ({ tutor }: { tutor: Tutor }) => {
                     asChild
                 >
                     <Link href={`/learner/book-tutor/tutor/${tutor.tutor_id}`}>
-                        <User /> Profile
+                        <User className="mr-2 h-4 w-4" /> Profile
                     </Link>
                 </Button>
 
                 <AlertDialog>
                     <AlertDialogTrigger asChild>
                         <Button size="sm" className="w-full flex-1 py-1">
-                            <Book /> Book
+                            <Book className="mr-2 h-4 w-4" /> Book Session
                         </Button>
                     </AlertDialogTrigger>
 
@@ -268,7 +270,6 @@ const TutorCard = ({ tutor }: { tutor: Tutor }) => {
                                         value={date}
                                         onChange={(e) => setDate(e.target.value)}
                                         className="pl-10"
-
                                     />
                                     <Calendar className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
                                 </div>
@@ -327,10 +328,7 @@ const TutorCard = ({ tutor }: { tutor: Tutor }) => {
                                             Estimated cost:{' '}
                                             <span className="font-semibold">
                                                 ₱
-                                                {(
-                                                    tutor.rate_per_hour *
-                                                    sessionHours
-                                                ).toLocaleString('en-PH', {
+                                                {estimatedCost.toLocaleString('en-PH', {
                                                     minimumFractionDigits: 2,
                                                     maximumFractionDigits: 2,
                                                 })}
@@ -544,25 +542,27 @@ export default function BookTutor({
                 </div>
 
                 {loading ? (
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
                         {Array.from({ length: 8 }).map((_, i) => (
-                            <TutorCardSkeleton key={i} />
+                            <TutorCardSkeleton key={`skeleton-${i}`} />
                         ))}
                     </div>
                 ) : (
                     <>
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
                             {tutors.data.map((tutor) => (
                                 <TutorCard key={tutor.id} tutor={tutor} />
                             ))}
                         </div>
 
-                        <Pagination
-                            links={tutors.links}
-                            onPageChange={(url: string) =>
-                                router.get(url, {}, { preserveState: true })
-                            }
-                        />
+                        {tutors.data.length > 0 && (
+                            <Pagination
+                                links={tutors.links}
+                                onPageChange={(url: string) =>
+                                    router.get(url, {}, { preserveState: true })
+                                }
+                            />
+                        )}
                     </>
                 )}
             </div>

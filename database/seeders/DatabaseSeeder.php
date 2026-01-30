@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
 
         $tutor2 = User::create([
             'name' => 'Jiro Lugagay',
-            'email' => 'sarah.tutor@acadench.com',
+            'email' => 'jiror@acadench.com',
             'role' => 'tutor',
             'password' => Hash::make('12341234'),
             'email_verified_at' => now(),
@@ -47,10 +47,10 @@ class DatabaseSeeder extends Seeder
             'specializations' => 'Algebra, Calculus, Geometry',
             'rate_per_hour' => 250.00,
             'photo' => '',
-            'bio' => '',
+            'bio' => 'Let me aid you as a professional tutor.',
             'status' => 'active',
-            'mop' => '',
-            'number' => '',
+            'mop' => 'PayMaya',
+            'number' => '09427372734',
         ]);
 
         Tutor::create([
@@ -59,10 +59,10 @@ class DatabaseSeeder extends Seeder
             'specializations' => 'Physics, Chemistry, Biology',
             'rate_per_hour' => 150.00,
             'photo' => '',
-            'bio' => '',
+            'bio' => 'I can help you as your tutor.',
             'status' => 'active',
-            'mop' => '',
-            'number' => '',
+            'mop' => 'GCash',
+            'number' => '09427342493',
         ]);
 
 

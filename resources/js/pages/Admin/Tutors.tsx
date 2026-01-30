@@ -3,6 +3,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { DataTable } from '../Components/DataTable';
 import { columns } from './column/tutor-column';
+import { AddTutorDialog } from './Components/AddTutorDialog';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -34,10 +35,15 @@ export default function Tutor({ tutors }: TutorProps) {
                             Manage and view all tutors in the system
                         </p>
                     </div>
+                    <AddTutorDialog />
                 </div>
                 <div className="overflow-hidden rounded-xl bg-[#FFFFFF] shadow-md">
                     <div className="m-4">
-                        <DataTable columns={columns} data={tutors} />
+                        <DataTable
+                            columns={columns}
+                            data={tutors}
+                            searchKey="Name"
+                        />
                     </div>
                 </div>
             </div>

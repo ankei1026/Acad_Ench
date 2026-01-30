@@ -98,9 +98,23 @@ class LearnerBookTutorController extends Controller
             'amount' => $amount,
         ]);
 
-        return response()->json([
-            'message' => 'Booking created successfully',
-            'booking' => $booking,
-        ], 201);
+        return redirect()->back()->with('success', 'Booking successful');
+    }
+
+    /**
+     * Cancel a booking (by learner)
+     */
+    public function cancel($book_id)
+    {
+        $booking = Booking::where('book_id', $book_id)->firstOrFail();
+
+        if ($booking->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        $booking->booking_status = 'canceled';
+        $booking->save();
+
+        return back()->with('success', 'Booking canceled.');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Models\Receipt;
 
 class Booking extends Model
 {
@@ -68,5 +69,13 @@ class Booking extends Model
     public function bookings()
     {
         return $this->hasMany(Booking::class, 'tutor_id');
+    }
+
+    /**
+     * Receipt relationship (one booking can have one receipt)
+     */
+    public function receipt()
+    {
+        return $this->hasOne(Receipt::class, 'book_id', 'book_id');
     }
 }

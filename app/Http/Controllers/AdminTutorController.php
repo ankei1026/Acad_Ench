@@ -41,4 +41,46 @@ class AdminTutorController extends Controller
             ]
         );
     }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8',
+            'subject' => 'required|string'
+        ]);
+
+        // Create User first
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => bcrypt($validated['password']),
+            'role' => 'tutor',
+        ]);
+
+        // Create Tutor profile
+        Tutor::create([
+            'user_id' => $user->id,
+            'subject' => $validated['subject']
+        ]);
+
+        return redirect()->route('admin.tutors')->with('success', 'Tutor created successfully!');
+    }
+
+    public function updateStatus($tutor_id)
+    {
+        try {
+            $tutor = Tutor::findOrFail($tutor_id);
+            $tutor->status = $tutor->status === 'active' ? 'inactive' : 'active';
+            $tutor->save();
+
+            $action = $tutor->status === 'active' ? 'activated' : 'deactivated';
+            $userName = $tutor->user ? $tutor->user->name : 'Tutor';
+
+            return back()->with('success', "Tutor {$userName} has been {$action} successfully!");
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to update tutor status');
+        }
+    }
 }

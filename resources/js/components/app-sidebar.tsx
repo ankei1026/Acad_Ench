@@ -34,11 +34,11 @@ const adminMainNavItems: NavItem[] = [
         href: '/admin/dashboard',
         icon: LayoutGrid,
     },
-    {
-        title: 'Revenue',
-        href: '/admin/revenue',
-        icon: DollarSignIcon,
-    },
+    // {
+    //     title: 'Revenue',
+    //     href: '/admin/revenue',
+    //     icon: DollarSignIcon,
+    // },
     {
         title: 'Learners',
         href: '/admin/learners',

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tutors', function (Blueprint $table) {
             // Custom tutor ID
-            $table->string('tutor_id', 10)->primary(); 
+            $table->string('tutor_id', 10)->primary();
 
             $table->unsignedBigInteger('user_id');
 
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->decimal('rate_per_hour', 10, 2)->nullable(); // Changed from text to decimal for monetary values
             $table->string('photo')->nullable();
             $table->text('bio')->nullable();
-            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->enum('status', ['active', 'inactive'])->default('inactive');
             $table->string('mop')->nullable();
             $table->string('number')->nullable();
 

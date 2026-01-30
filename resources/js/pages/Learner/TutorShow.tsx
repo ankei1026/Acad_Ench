@@ -66,14 +66,6 @@ export default function TutorProfileView({ tutor }: TutorProfileProps) {
                                 Back to Tutors
                             </Link>
                         </Button>
-                        <Button asChild className="gap-2">
-                            <Link
-                                href={`/learner/book-tutor/${tutor.id}/schedule`}
-                            >
-                                <Calendar className="h-4 w-4" />
-                                Book Session
-                            </Link>
-                        </Button>
                     </div>
                 </div>
 

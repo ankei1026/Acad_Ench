@@ -1,4 +1,5 @@
-import { Head } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
+import { Toaster, toast } from 'sonner';
 import LandingHeader from './landing-header';
 
 import { Button } from '@/components/ui/button';
@@ -14,9 +15,40 @@ import {
 } from '@/components/ui/card';
 
 export default function TutorApplication() {
+    const { data, setData, post, processing, errors } = useForm({
+        full_name: '',
+        email: '',
+        subject: '',
+        documents: null as File | null,
+    });
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.currentTarget.files?.[0] || null;
+        setData('documents', file);
+    };
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        post('/tutor-application', {
+            onSuccess: () => {
+                toast.success('Application submitted successfully! We will review it within 2-7 days.');
+                setData({
+                    full_name: '',
+                    email: '',
+                    subject: '',
+                    documents: null,
+                });
+            },
+            onError: () => {
+                toast.error('Failed to submit application. Please check the form and try again.');
+            },
+        });
+    };
+
     return (
         <>
             <Head title="Tutor Application" />
+            <Toaster position="top-right" />
 
             {/* Page background */}
             <div className="min-h-screen bg-[#FCF8F1]">
@@ -39,13 +71,15 @@ export default function TutorApplication() {
 
                                 <ul className="mt-6 space-y-3 text-gray-700">
                                     <li>✔ Teach subjects you’re passionate about</li>
-                                    <li>✔ Competitive pay</li>
+                                    <li>✔ Your per hour rate</li>
                                     <li>✔ Be a part of our team</li>
                                 </ul>
 
                                 <p className="mt-6 text-sm text-gray-500 max-w-lg">
                                     Fill out the form and we’ll review your application
-                                    within 48 hours.
+                                    within 2 - 7 days.
+                                    <br />
+                                    Your account will be sent through email.
                                 </p>
                                 <div className="mt-8 rounded-lg border border-yellow-200 bg-yellow-50 p-6">
                                     <h3 className="text-lg font-semibold text-gray-900">
@@ -60,7 +94,7 @@ export default function TutorApplication() {
                                     </ul>
 
                                     <p className="mt-4 text-xs text-gray-500">
-                                        Accepted formats: PDF, DOC, DOCX · Max size: 5MB
+                                        Accepted format: PDF
                                     </p>
                                 </div>
 
@@ -78,10 +112,27 @@ export default function TutorApplication() {
                                 </CardHeader>
 
                                 <CardContent>
-                                    <form className="space-y-6">
+                                    <form className="space-y-6" onSubmit={handleSubmit}>
                                         <div className="space-y-2">
-                                            <Label htmlFor="name">Full Name</Label>
-                                            <Input id="name" placeholder="John Doe" />
+                                            <Label htmlFor="full_name">Full Name</Label>
+                                            <Input
+                                                id="full_name"
+                                                placeholder="John Doe"
+                                                value={data.full_name}
+                                                onChange={(e) =>
+                                                    setData('full_name', e.target.value)
+                                                }
+                                                className={
+                                                    errors.full_name
+                                                        ? 'border-red-500'
+                                                        : ''
+                                                }
+                                            />
+                                            {errors.full_name && (
+                                                <p className="text-xs text-red-500">
+                                                    {errors.full_name}
+                                                </p>
+                                            )}
                                         </div>
 
                                         <div className="space-y-2">
@@ -89,8 +140,22 @@ export default function TutorApplication() {
                                             <Input
                                                 id="email"
                                                 type="email"
-                                                placeholder="john@example.com"
+                                                placeholder="jon@example.com"
+                                                value={data.email}
+                                                onChange={(e) =>
+                                                    setData('email', e.target.value)
+                                                }
+                                                className={
+                                                    errors.email
+                                                        ? 'border-red-500'
+                                                        : ''
+                                                }
                                             />
+                                            {errors.email && (
+                                                <p className="text-xs text-red-500">
+                                                    {errors.email}
+                                                </p>
+                                            )}
                                         </div>
 
                                         <div className="space-y-2">
@@ -99,8 +164,22 @@ export default function TutorApplication() {
                                             </Label>
                                             <Input
                                                 id="subject"
-                                                placeholder="Mathematics, Physics, English..."
+                                                placeholder="Ex. Mathematics"
+                                                value={data.subject}
+                                                onChange={(e) =>
+                                                    setData('subject', e.target.value)
+                                                }
+                                                className={
+                                                    errors.subject
+                                                        ? 'border-red-500'
+                                                        : ''
+                                                }
                                             />
+                                            {errors.subject && (
+                                                <p className="text-xs text-red-500">
+                                                    {errors.subject}
+                                                </p>
+                                            )}
                                         </div>
 
                                         <div className="space-y-2">
@@ -111,21 +190,30 @@ export default function TutorApplication() {
                                             <Input
                                                 id="documents"
                                                 type="file"
-                                                multiple
-                                                accept=".pdf,.doc,.docx"
+                                                accept=".pdf"
                                                 className="cursor-pointer bg-white"
+                                                onChange={handleFileChange}
                                             />
 
                                             <p className="text-xs text-gray-500">
-                                                Upload one or more files (PDF, DOC, DOCX)
+                                                Upload one file (PDF), format (Lastname, Firstname MiddleInitial) Ex: Doe, Jon R.
                                             </p>
+
+                                            {errors.documents && (
+                                                <p className="text-xs text-red-500">
+                                                    {errors.documents}
+                                                </p>
+                                            )}
                                         </div>
 
-
                                         <Button
-                                            className="w-full bg-yellow-400 text-black hover:bg-yellow-500"
+                                            type="submit"
+                                            disabled={processing}
+                                            className="w-full bg-yellow-400 text-black hover:bg-yellow-500 disabled:opacity-50"
                                         >
-                                            Submit Application
+                                            {processing
+                                                ? 'Submitting...'
+                                                : 'Submit Application'}
                                         </Button>
                                     </form>
                                 </CardContent>

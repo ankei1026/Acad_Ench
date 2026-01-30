@@ -1,51 +1,70 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import {
+    Field,
+    FieldDescription,
+    FieldGroup,
+    FieldLabel,
+} from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { Link, router, useForm } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 import { toast } from 'sonner';
 
-export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
+export function LoginForm({
+    className,
+    ...props
+}: React.ComponentProps<'div'>) {
     const { data, setData, processing, errors, post } = useForm({
         email: '',
         password: '',
     });
 
     const submit: FormEventHandler = (e) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    post('/authentication/login', {
-        onSuccess: () => {
-            toast.success("Login successful", {
-                className: "bg-green-50 text-green-800 border-green-200",
-            });
-        },
+        post('/authentication/login', {
+            onSuccess: () => {
+                toast.success('Login successful', {
+                    className: 'bg-green-50 text-green-800 border-green-200',
+                });
+            },
 
-        onError: () => {
-            toast.error("Login failed", {
-                description: "Invalid email or password.",
-                className: "bg-red-50 text-red-800 border-red-200",
-            });
-        },
+            onError: () => {
+                toast.error('Login failed', {
+                    description: 'Invalid email or password.',
+                    className: 'bg-red-50 text-red-800 border-red-200',
+                });
+            },
 
-        onFinish: () => {
-            setData('password', '');
-        },
-    });
-};
-
+            onFinish: () => {
+                setData('password', '');
+            },
+        });
+    };
 
     return (
         <div className={cn('flex flex-col gap-6', className)} {...props}>
-            <Card className='dark:bg-white'>
+            <Card className="dark:bg-white">
                 <CardHeader>
                     <center>
-                        <img src="/assets/Logo.png" alt="AcadEnch Logo" className="h-24 w-36" />
+                        <img
+                            src="/assets/Logo.png"
+                            alt="AcadEnch Logo"
+                            className="h-24 w-36"
+                        />
                     </center>
                     <CardTitle>Login to your account</CardTitle>
-                    <CardDescription>Enter your email below to login to your account</CardDescription>
+                    <CardDescription>
+                        Enter your email below to login to your account
+                    </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={submit}>
@@ -57,15 +76,22 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                                     type="email"
                                     placeholder="m@example.com"
                                     value={data.email}
-                                    onChange={(e) => setData('email', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('email', e.target.value)
+                                    }
                                     required
-
                                 />
-                                {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+                                {errors.email && (
+                                    <p className="text-sm text-red-500">
+                                        {errors.email}
+                                    </p>
+                                )}
                             </Field>
                             <Field>
                                 <div className="flex items-center">
-                                    <FieldLabel htmlFor="password">Password</FieldLabel>
+                                    <FieldLabel htmlFor="password">
+                                        Password
+                                    </FieldLabel>
                                     <Link
                                         href="/auth/forgot-password"
                                         className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
@@ -77,10 +103,16 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                                     id="password"
                                     type="password"
                                     value={data.password}
-                                    onChange={(e) => setData('password', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('password', e.target.value)
+                                    }
                                     required
                                 />
-                                {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
+                                {errors.password && (
+                                    <p className="text-sm text-red-500">
+                                        {errors.password}
+                                    </p>
+                                )}
                             </Field>
                             <Field>
                                 <Button
@@ -91,7 +123,13 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                                     {processing ? 'Logging in...' : 'Login'}
                                 </Button>
                                 <FieldDescription className="text-center">
-                                    Don&apos;t have an account? <Link href="/authentication/signup">Signup</Link>
+                                    Don&apos;t have an account?{' '}
+                                    <Link href="/authentication/signup">
+                                        Signup
+                                    </Link>
+                                </FieldDescription>
+                                <FieldDescription className="text-center">
+                                    Go to <Link href="/">Home</Link>
                                 </FieldDescription>
                             </Field>
                         </FieldGroup>

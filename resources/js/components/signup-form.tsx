@@ -1,16 +1,31 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import {
+    Field,
+    FieldDescription,
+    FieldGroup,
+    FieldLabel,
+} from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Link, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
+import { toast } from 'sonner';
 
-export function SignupForm({ className, ...props }: React.ComponentProps<'div'>) {
+export function SignupForm({
+    className,
+    ...props
+}: React.ComponentProps<'div'>) {
     const { data, setData, processing, errors, reset, post } = useForm({
         name: '',
         email: '',
-        role: 'tutor',
+        role: 'learner',
         password: '',
         confirm_password: '',
     });
@@ -26,7 +41,9 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
         }
 
         post('/authentication/signup', {
-            // ✅ Now route() is properly imported
+            onSuccess: () => {
+                toast.success('Signup successful! Welcome to AcadEnch.');
+            },
             onFinish: () => reset('password', 'confirm_password'),
         });
     };
@@ -36,10 +53,16 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
             <Card>
                 <CardHeader>
                     <center>
-                        <img src="/assets/Logo.png" alt="AcadEnch Logo" className="h-24 w-36" />
+                        <img
+                            src="/assets/Logo.png"
+                            alt="AcadEnch Logo"
+                            className="h-24 w-36"
+                        />
                     </center>
                     <CardTitle>Signup to your account</CardTitle>
-                    <CardDescription>Signup your account as a learner below</CardDescription>
+                    <CardDescription>
+                        Signup your account as a learner below
+                    </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={submit}>
@@ -51,10 +74,16 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                                     type="text"
                                     placeholder="Jane Doe"
                                     value={data.name}
-                                    onChange={(e) => setData('name', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('name', e.target.value)
+                                    }
                                     required
                                 />
-                                {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
+                                {errors.name && (
+                                    <p className="text-sm text-red-500">
+                                        {errors.name}
+                                    </p>
+                                )}
                             </Field>
                             <Field>
                                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -63,32 +92,57 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                                     type="email"
                                     placeholder="m@example.com"
                                     value={data.email}
-                                    onChange={(e) => setData('email', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('email', e.target.value)
+                                    }
                                     required
                                 />
-                                {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+                                {errors.email && (
+                                    <p className="text-sm text-red-500">
+                                        {errors.email}
+                                    </p>
+                                )}
                             </Field>
                             <Field>
-                                <FieldLabel htmlFor="password">Password</FieldLabel>
+                                <FieldLabel htmlFor="password">
+                                    Password
+                                </FieldLabel>
                                 <Input
                                     id="password"
                                     type="password"
                                     value={data.password}
-                                    onChange={(e) => setData('password', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('password', e.target.value)
+                                    }
                                     required
                                 />
-                                {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
+                                {errors.password && (
+                                    <p className="text-sm text-red-500">
+                                        {errors.password}
+                                    </p>
+                                )}
                             </Field>
                             <Field>
-                                <FieldLabel htmlFor="confirm_password">Confirm Password</FieldLabel>
+                                <FieldLabel htmlFor="confirm_password">
+                                    Confirm Password
+                                </FieldLabel>
                                 <Input
                                     id="confirm_password"
                                     type="password"
                                     value={data.confirm_password}
-                                    onChange={(e) => setData('confirm_password', e.target.value)}
+                                    onChange={(e) =>
+                                        setData(
+                                            'confirm_password',
+                                            e.target.value,
+                                        )
+                                    }
                                     required
                                 />
-                                {errors.confirm_password && <p className="text-sm text-red-500">{errors.confirm_password}</p>}
+                                {errors.confirm_password && (
+                                    <p className="text-sm text-red-500">
+                                        {errors.confirm_password}
+                                    </p>
+                                )}
                             </Field>
                             <Field>
                                 <Button
@@ -99,7 +153,16 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                                     {processing ? 'Signing up...' : 'Signup'}
                                 </Button>
                                 <FieldDescription className="text-center">
-                                    Already have an account? <Link href="/authentication/login">Login</Link>
+                                    Already have an account?{' '}
+                                    <Link href="/authentication/login">
+                                        Login
+                                    </Link>
+                                </FieldDescription>
+                                <FieldDescription className="text-center">
+                                    Go to{' '}
+                                    <Link href="/">
+                                        Home
+                                    </Link>
                                 </FieldDescription>
                             </Field>
                         </FieldGroup>
