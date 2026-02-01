@@ -11,6 +11,7 @@ use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\LearnerDashboardController;
 use App\Http\Controllers\LearnerHomeController;
 use App\Http\Controllers\LearnerLecturesController;
+use App\Http\Controllers\LearnerRequestRefundController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SessionController;
 use Illuminate\Support\Facades\Route;
@@ -76,6 +77,8 @@ Route::middleware(['auth', 'role:learner'])->prefix('learner')->group(function (
     // Learner actions: pay receipt and cancel booking
     Route::post('/bookings/{book_id}/receipt', [ReceiptController::class, 'store'])->name('learner.bookings.receipt.store');
     Route::patch('/bookings/{book_id}/cancel', [LearnerBookTutorController::class, 'cancel'])->name('learner.bookings.cancel');
+
+    Route::get('/request-refund', [LearnerRequestRefundController::class, 'index'])->name('learner.request-refund');
 });
 
 require __DIR__ . '/settings.php';

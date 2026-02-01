@@ -9,6 +9,7 @@ import {
     Pen,
     User2,
     Users,
+    Wallet,
 } from 'lucide-react';
 
 import { NavMain } from '@/components/nav-main';
@@ -97,6 +98,11 @@ const learnerMainNavItems: NavItem[] = [
         title: 'Lectures',
         href: '/learner/lectures',
         icon: Pen,
+    },
+        {
+        title: 'Request Refund',
+        href: '/learner/request-refund',
+        icon: Wallet,
     },
 ];
 

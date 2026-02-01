@@ -16,7 +16,7 @@ import { useState } from 'react';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Lectures',
-        href: '/tutor/lectures',
+        href: '/learner/lectures',
     },
 ];
 
@@ -74,6 +74,7 @@ export default function Lectures() {
                     <p className="text-muted-foreground">
                         Manage your lecture sessions and classes
                     </p>
+
                 </div>
 
                 {/* Main Content Grid */}
